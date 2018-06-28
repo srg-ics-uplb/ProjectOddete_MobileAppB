@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">PROJ</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_maps">Map</string>
+    <string-array name="water_properties">
+        <item>All properties</item>
+        <item>pH level</item>
+        <item>Temperature</item>
+        <item>Conductivity</item>
+        <item>Salinity</item>
+        <item>Timestamp</item>
+    </string-array>
+</resources>
