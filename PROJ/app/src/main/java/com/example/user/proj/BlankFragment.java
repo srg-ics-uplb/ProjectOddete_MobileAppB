@@ -1,6 +1,7 @@
-package com.example.user.project_odette;
+package com.example.user.proj;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.example.user.proj.R;
+import com.example.user.proj.fetchData;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,11 +29,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
  */
 public class BlankFragment extends Fragment implements OnMapReadyCallback{
 
+    private Context context;
     private GoogleMap mMap;
-
     SupportMapFragment mapFragment;
+
     public BlankFragment() {
         // Required empty public constructor
+    }
+
+    public BlankFragment (Context context){
+        this.context=context;
     }
 
     @Override
@@ -73,10 +80,7 @@ public class BlankFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        fetchData process=new fetchData(this.context, mMap);
+        process.execute();
     }
 }

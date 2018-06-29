@@ -6,12 +6,12 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-
-import com.example.user.project_odette.BlankFragment;
+import android.widget.TableLayout;
+import com.example.user.proj.BlankFragment;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
-
+    public static TableLayout table;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +39,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         Fragment fragment=null;
         switch (menuItem.getItemId()){
             case R.id.navigation_map:
-                fragment= new BlankFragment();
+                fragment= new BlankFragment(this);
                 break;
             case R.id.navigation_table:
-                fragment=new TableFragment();
+                fragment=new TableFragment(this);
                 break;
         }
         return loadFragment(fragment);

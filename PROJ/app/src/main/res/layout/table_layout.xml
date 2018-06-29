@@ -3,191 +3,58 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TableLayout
-        android:id="@+id/table2"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/test_button_text23"
-        android:stretchColumns="*"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
-        >
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/table_cells">
-
-            <TextView
+        android:fillViewport="true">
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TableLayout
+                android:id="@+id/table"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/table_headers"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="GPS Location\n(Long, Lat)"
-                android:textStyle="bold" />
+                android:layout_below="@+id/test_button_text23"
+                android:stretchColumns="*"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp">
 
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="(23,45)" />
+                <TableRow>
+                    <TextView
+                        android:text="Time"
+                        style="@style/Table_Headers"/>
 
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="(200,54)" />
+                    <TextView
+                        android:text="GPS Location\n(Lat, Lng)"
+                        style="@style/Table_Headers"/>
 
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="(156,87)" />
-        </TableRow>
+                    <TextView
+                        android:text="pH level"
+                        style="@style/Table_Headers"/>
 
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/table_row">
+                    <TextView
+                        android:text="Temp\nin C"
+                        style="@style/Table_Headers"/>
 
+                    <TextView
+                        android:text="Temp\nin F"
+                        style="@style/Table_Headers"/>
 
-            <TextView
-                android:layout_height="match_parent"
-                android:background="@drawable/table_headers"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="pH Level"
-                android:textStyle="bold" />
+                    <TextView
+                        android:text="Conductivity"
+                        style="@style/Table_Headers"/>
 
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="7" />
+                    <TextView
+                        android:text="TDS"
+                        style="@style/Table_Headers"/>
 
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="5" />
-
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="7.35" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/table_cells">
-
-            <TextView
-                android:layout_height="match_parent"
-                android:background="@drawable/table_headers"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="Temperature"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="24C" />
-
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="36C" />
-
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="25C" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/table_row">
-
-            <TextView
-                android:layout_height="match_parent"
-                android:background="@drawable/table_headers"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="Conductivity"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="A" />
-
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="B" />
-
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="C" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/table_cells">
-
-            <TextView
-                android:layout_height="match_parent"
-                android:background="@drawable/table_headers"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="Salinity"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="A" />
-
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="B" />
-
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="C" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/table_row">
-
-            <TextView
-                android:layout_height="match_parent"
-                android:background="@drawable/table_headers"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="Timestamp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="A" />
-
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="B" />
-
-            <TextView
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="C" />
-        </TableRow>
-    </TableLayout>
+                    <TextView
+                        android:text="Salinity"
+                        style="@style/Table_Headers"/>
+                </TableRow>
+            </TableLayout>
+        </HorizontalScrollView>
+    </ScrollView>
 </RelativeLayout>
