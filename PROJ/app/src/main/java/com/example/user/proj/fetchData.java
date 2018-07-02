@@ -6,10 +6,13 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,11 +38,11 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
     Context context;
     public static TableLayout table;
     public GoogleMap mMap;
+    public Spinner spinner;
 
     static String data="";
     ArrayList<String> time=new ArrayList<String>();
-    ArrayList<Double> lat=new ArrayList<Double>();
-    ArrayList<Double> lng=new ArrayList<Double>();
+    ArrayList<LatLng> latlng= new ArrayList<LatLng>();
     ArrayList<String> phlvls=new ArrayList<String>();
     ArrayList<String> tempcs=new ArrayList<String>();
     ArrayList<String> tempfr=new ArrayList<String>();
@@ -52,9 +55,10 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
         this.table=table;
     }
 
-    public fetchData(Context context, GoogleMap mMap){
+    public fetchData(Context context, GoogleMap mMap, Spinner spinner){
         this.context=context;
         this.mMap=mMap;
+        this.spinner=spinner;
     }
 
     @Override
@@ -73,19 +77,18 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
 
             JSONArray ja = new JSONArray(data);
             for(int i=0; i<ja.length(); i++){
-                Double temp;
+                Double temp, temp1;
                 JSONObject jo = (JSONObject) ja.get(i);
                 time.add((String)jo.get("time"));
 
                 if(jo.get("lat") instanceof Integer){
                     temp=1.0*(int)jo.get("lat");
                 }else temp=(Double)jo.get("lat");
-                lat.add(temp);
 
                 if(jo.get("lng") instanceof Integer){
-                    temp=1.0*(int)jo.get("lng");
-                }else temp=(Double)jo.get("lng");
-                lng.add(temp);
+                    temp1=1.0*(int)jo.get("lng");
+                }else temp1=(Double)jo.get("lng");
+                latlng.add(new LatLng(temp, temp1));
 
                 temp=(Double) jo.get("ph_lvl");
                 phlvls.add(Double.toString(temp));
@@ -124,8 +127,8 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
             for(int i=0;i<phlvls.size();i++){
                 TableRow row=new TableRow(this.context);
                 String time_txt = time.get(i);
-                String lat_txt = Double.toString(lat.get(i));
-                String lng_txt = Double.toString(lng.get(i));
+                String lat_txt = Double.toString(latlng.get(i).latitude);
+                String lng_txt = Double.toString(latlng.get(i).longitude);
                 String ph_txt = phlvls.get(i);
                 String tempcs_txt = tempcs.get(i);
                 String tempfr_txt = tempcs.get(i);
@@ -190,15 +193,31 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
 
         //======================ADDING PINS AND DETAILS TO MAP==================================//
         if(mMap!=null){
-            for(int i=0; i<lat.size();i++){
-                LatLng pin = new LatLng(lat.get(i), lng.get(i));
-                mMap.addMarker(new MarkerOptions()
-                        .position(pin)
-                        .title("("+lat.get(i)+", "+lng.get(i)+")")
-                        .snippet("pH level: "+phlvls.get(i)+"\n"+
-                                "Temp in C: "+tempcs.get(i)));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(pin));
-            }
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                    String text = parentView.getItemAtPosition(position).toString();
+                    if(text.equals("pH level")){
+
+                    }else{
+                        for(int i=0; i<phlvls.size();i++){
+                            LatLng pin = latlng.get(i);
+                            mMap.addMarker(new MarkerOptions()
+                                    .position(pin)
+                                    .title("("+latlng.get(i).latitude+", "+latlng.get(i).longitude+")")
+                                    .snippet("pH level: "+phlvls.get(i)+"\n"+
+                                            "Temp in C: "+tempcs.get(i)+"\n"+
+                                            "Temp in F: "+tempfr.get(i)+"\n"+
+                                            "Conductivity: "+cond.get(i)+"\n"+
+                                            "TDS: "+tds.get(i)+"\n"+
+                                            "Salinity: "+sal.get(i)));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(pin));
+                        }
+                    }
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parentView) {}
+            });
         }
         //======================================================================================//
     }
