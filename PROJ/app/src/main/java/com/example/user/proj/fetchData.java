@@ -3,10 +3,12 @@ package com.example.user.proj;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
@@ -19,6 +21,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.maps.android.heatmaps.HeatmapTileProvider;
+import com.google.maps.android.heatmaps.WeightedLatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,54 +38,69 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class fetchData extends AsyncTask<Void, Void, Void> {
 
     Context context;
     public static TableLayout table;
     public GoogleMap mMap;
-    public Spinner spinner;
+    public Spinner spinner, areaspinner, missionspinner;
+    private HeatmapTileProvider mProvider;
+    private TileOverlay mOverlay;
 
     static String data="";
-    ArrayList<String> time=new ArrayList<String>();
-    ArrayList<LatLng> latlng= new ArrayList<LatLng>();
-    ArrayList<String> phlvls=new ArrayList<String>();
-    ArrayList<String> tempcs=new ArrayList<String>();
-    ArrayList<String> tempfr=new ArrayList<String>();
-    ArrayList<String> cond=new ArrayList<String>();
-    ArrayList<String> tds=new ArrayList<String>();
-    ArrayList<String> sal=new ArrayList<String>();
+    URL url;
+    HttpURLConnection httpURLConnection;
+    InputStream inputStream;
+    BufferedReader br;
 
-    public fetchData (Context context, TableLayout table){
+    ArrayList<LatLng> latlng= new ArrayList<LatLng>();
+    ArrayList<Double> phlvls=new ArrayList<Double>();
+    ArrayList<Double> tempcs=new ArrayList<Double>();
+    ArrayList<Double> tempfr=new ArrayList<Double>();
+    ArrayList<Double> cond=new ArrayList<Double>();
+    ArrayList<Double> tds=new ArrayList<Double>();
+    ArrayList<Double> sal=new ArrayList<Double>();
+
+    ArrayList<String> area = new ArrayList<String>();
+
+    public fetchData (Context context, TableLayout table, Spinner areaspinner, Spinner missionspinner){
         this.context=context;
         this.table=table;
+        this.areaspinner = areaspinner;
+        this.missionspinner = missionspinner;
     }
 
-    public fetchData(Context context, GoogleMap mMap, Spinner spinner){
+    public fetchData(Context context, GoogleMap mMap, Spinner spinner, Spinner areaspinner, Spinner missionspinner){
         this.context=context;
         this.mMap=mMap;
         this.spinner=spinner;
+        this.areaspinner = areaspinner;
+        this.missionspinner = missionspinner;
     }
 
     @Override
     protected Void doInBackground(Void... voids) {  //extracting JSON file
-        try {
-            URL url = new URL("https://api.myjson.com/bins/8k6oe"); //get the JSON file from this url
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            InputStream inputStream = httpURLConnection.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-
-            String line="";
-            while(line!=null){
-                line=br.readLine();
-                data+=line;
+        //==========================reading the Area and Mission to be put in spinner===========================//
+        try{
+            JSONArray ja=readURL("https://api.myjson.com/bins/841l8");
+            for(int i=0; i<ja.length(); i++){
+                JSONObject jo = (JSONObject) ja.get(i);
+                area.add((String)jo.get("area_name"));
             }
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //======================================================================================================//
 
-            JSONArray ja = new JSONArray(data);
+        //=================================reading the value of properties======================================//
+        try {
+            JSONArray ja=readURL("https://api.myjson.com/bins/16sgmy");
             for(int i=0; i<ja.length(); i++){
                 Double temp, temp1;
                 JSONObject jo = (JSONObject) ja.get(i);
-                time.add((String)jo.get("time"));
 
                 if(jo.get("lat") instanceof Integer){
                     temp=1.0*(int)jo.get("lat");
@@ -90,79 +111,91 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
                 }else temp1=(Double)jo.get("lng");
                 latlng.add(new LatLng(temp, temp1));
 
-                temp=(Double) jo.get("ph_lvl");
-                phlvls.add(Double.toString(temp));
+                if(jo.get("ph_lvl") instanceof Integer){
+                    temp=1.0*(int)jo.get("ph_lvl");
+                }else temp=(Double)jo.get("ph_lvl");
+                phlvls.add(temp);
 
-                temp=(Double) jo.get("temp_celsius");
-                tempcs.add(Double.toString(temp));
+                if(jo.get("temp_celsius") instanceof Integer){
+                    temp=1.0*(int)jo.get("temp_celsius");
+                }else temp=(Double)jo.get("temp_celsius");
+                tempcs.add(temp);
 
-                temp=(Double) jo.get("temp_fahrenheit");
-                tempfr.add(Double.toString(temp));
+                if(jo.get("temp_fahrenheit") instanceof Integer){
+                    temp=1.0*(int)jo.get("temp_fahrenheit");
+                }else temp=(Double)jo.get("temp_fahrenheit");
+                tempfr.add(temp);
 
-                temp=(Double) jo.get("conductivity");
-                cond.add(Double.toString(temp));
+                if(jo.get("conductivity") instanceof Integer){
+                    temp=1.0*(int)jo.get("conductivity");
+                }else temp=(Double)jo.get("conductivity");
+                cond.add(temp);
 
-                int temp2=(int) jo.get("tds");
-                tds.add(Integer.toString(temp2));
+                if(jo.get("tds") instanceof Integer){
+                    temp=1.0*(int)jo.get("tds");
+                }else temp=(Double)jo.get("tds");
+                tds.add(temp);
 
-                temp=(Double) jo.get("salinity");
-                sal.add(Double.toString(temp));
+                if(jo.get("salinity") instanceof Integer){
+                    temp=1.0*(int)jo.get("salinity");
+                }else temp=(Double)jo.get("salinity");
+                sal.add(temp);
             }
-        }catch (MalformedURLException e){
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }catch (JSONException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {  //adding the extracted JSON file to table
         super.onPostExecute(aVoid);
-
+        if (this.context!=null){
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.context,
+                    android.R.layout.simple_spinner_item, area);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            areaspinner.setAdapter(adapter);
+        }
         //====================================POPULATING TABLE====================================//
-        if (table != null) {
-            for(int i=0;i<phlvls.size();i++){
-                TableRow row=new TableRow(this.context);
-                String time_txt = time.get(i);
+        if (table != null && this.context!=null) {
+            while (table.getChildCount() > 1)
+                table.removeView(table.getChildAt(table.getChildCount() - 1));
+
+            for (int i = 0; i < phlvls.size(); i++) {
+                TableRow row = new TableRow(this.context);
                 String lat_txt = Double.toString(latlng.get(i).latitude);
                 String lng_txt = Double.toString(latlng.get(i).longitude);
-                String ph_txt = phlvls.get(i);
-                String tempcs_txt = tempcs.get(i);
-                String tempfr_txt = tempcs.get(i);
-                String cond_txt = tempcs.get(i);
-                String tds_txt = tempcs.get(i);
-                String sal_txt = tempcs.get(i);
+                String ph_txt = Double.toString(phlvls.get(i));
+                String tempcs_txt = Double.toString(tempcs.get(i));
+                String tempfr_txt = Double.toString(tempcs.get(i));
+                String cond_txt = Double.toString(tempcs.get(i));
+                String tds_txt = Double.toString(tempcs.get(i));
+                String sal_txt = Double.toString(tempcs.get(i));
 
-                TextView time_tv=new TextView(this.context);
-                time_tv.setText(time_txt);
-                TextView latlng_tv=new TextView(this.context);
-                latlng_tv.setText("("+lat_txt+", "+lng_txt+")");
-                TextView ph_tv=new TextView(this.context);
+                TextView latlng_tv = new TextView(this.context);
+                latlng_tv.setText("(" + lat_txt + ", " + lng_txt + ")");
+                TextView ph_tv = new TextView(this.context);
                 ph_tv.setText(ph_txt);
-                TextView tempcs_tv=new TextView(this.context);
+                TextView tempcs_tv = new TextView(this.context);
                 tempcs_tv.setText(tempcs_txt);
-                TextView tempfr_tv=new TextView(this.context);
+                TextView tempfr_tv = new TextView(this.context);
                 tempfr_tv.setText(tempfr_txt);
-                TextView cond_tv=new TextView(this.context);
+                TextView cond_tv = new TextView(this.context);
                 cond_tv.setText(cond_txt);
-                TextView tds_tv=new TextView(this.context);
+                TextView tds_tv = new TextView(this.context);
                 tds_tv.setText(tds_txt);
-                TextView sal_tv=new TextView(this.context);
+                TextView sal_tv = new TextView(this.context);
                 sal_tv.setText(sal_txt);
 
                 int col;
-                if(i%2==0){
-                    col=Color.parseColor("#FFFFFF");
-                }else{
-                    col=Color.parseColor("#D6F4FD");
+                if (i % 2 == 0) {
+                    col = Color.parseColor("#FFFFFF");
+                } else {
+                    col = Color.parseColor("#D6F4FD");
                 }
 
                 //manually setting the style until textview.setTextAppearance() is fixed.
-                time_tv.setGravity(Gravity.CENTER | Gravity.BOTTOM);
-                time_tv.setBackgroundColor(col);
                 latlng_tv.setGravity(Gravity.CENTER | Gravity.BOTTOM);
                 latlng_tv.setBackgroundColor(col);
                 ph_tv.setGravity(Gravity.CENTER | Gravity.BOTTOM);
@@ -178,7 +211,6 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
                 sal_tv.setGravity(Gravity.CENTER | Gravity.BOTTOM);
                 sal_tv.setBackgroundColor(col);
 
-                row.addView(time_tv);
                 row.addView(latlng_tv);
                 row.addView(ph_tv);
                 row.addView(tempcs_tv);
@@ -191,34 +223,94 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
         }
         //======================================================================================//
 
-        //======================ADDING PINS AND DETAILS TO MAP==================================//
+        //=============================ADDING PINS AND HEATMAP==================================//
         if(mMap!=null){
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                    String text = parentView.getItemAtPosition(position).toString();
-                    if(text.equals("pH level")){
-
-                    }else{
-                        for(int i=0; i<phlvls.size();i++){
-                            LatLng pin = latlng.get(i);
-                            mMap.addMarker(new MarkerOptions()
-                                    .position(pin)
-                                    .title("("+latlng.get(i).latitude+", "+latlng.get(i).longitude+")")
-                                    .snippet("pH level: "+phlvls.get(i)+"\n"+
-                                            "Temp in C: "+tempcs.get(i)+"\n"+
-                                            "Temp in F: "+tempfr.get(i)+"\n"+
-                                            "Conductivity: "+cond.get(i)+"\n"+
-                                            "TDS: "+tds.get(i)+"\n"+
-                                            "Salinity: "+sal.get(i)));
-                            mMap.moveCamera(CameraUpdateFactory.newLatLng(pin));
+            if(latlng.size()!=0) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng.get(0)));
+                addPins();
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        mMap.addMarker(new MarkerOptions()
+                                .position(latlng.get(0)));
+                        String text = parentView.getItemAtPosition(position).toString();
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng.get(0)));
+                        mMap.clear();
+                        if (text.equals("pH level")) {
+                            addHeatMap(phlvls);
+                        } else if (text.equals("Temperature (Celsius)")) {
+                            addHeatMap(tempcs);
+                        } else if (text.equals("Temperature (Fahrenheit)")) {
+                            addHeatMap(tempfr);
+                        } else if (text.equals("Conductivity")) {
+                            addHeatMap(cond);
+                        } else if (text.equals("TDS (Total Dissolved Solids)")) {
+                            addHeatMap(tds);
+                        } else if (text.equals("Salinity")) {
+                            addHeatMap(sal);
+                        } else {
+                            addPins();
                         }
                     }
-                }
-                @Override
-                public void onNothingSelected(AdapterView<?> parentView) {}
-            });
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                    }
+                });
+            }
         }
         //======================================================================================//
+    }
+
+    private void addHeatMap(ArrayList<Double> weight) {
+        ArrayList<WeightedLatLng> weighteddata = new ArrayList<WeightedLatLng>();
+
+        for(int i=0; i<weight.size(); i++){
+            weighteddata.add(new WeightedLatLng(latlng.get(i), weight.get(i)));
+        }
+        mProvider = new HeatmapTileProvider.Builder()
+                .weightedData(weighteddata)
+                .build();
+        mOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+    }
+
+    private void addPins(){
+        for(int i=0; i<phlvls.size();i++){
+            LatLng pin = latlng.get(i);
+            mMap.addMarker(new MarkerOptions()
+                    .position(pin)
+                    .title("("+latlng.get(i).latitude+", "+latlng.get(i).longitude+")")
+                    .snippet("   pH level: "+phlvls.get(i)+"   \n"+
+                            "   Temp in C: "+tempcs.get(i)+"   \n"+
+                            "   Temp in F: "+tempfr.get(i)+"   \n"+
+                            "   Conductivity: "+cond.get(i)+"   \n"+
+                            "   TDS: "+tds.get(i)+"   \n"+
+                            "   Salinity: "+sal.get(i)+"   "));
+        }
+    }
+
+    private JSONArray readURL(String link){
+        JSONArray ja=null;
+        data="";
+        try {
+            url = new URL(link); //get the JSON file from this url
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            inputStream = httpURLConnection.getInputStream();
+            br = new BufferedReader(new InputStreamReader(inputStream));
+
+            String line="";
+            while(line!=null){
+                line=br.readLine();
+                data+=line;
+            }
+            ja = new JSONArray(data);
+        }catch (MalformedURLException e){
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return ja;
     }
 }
