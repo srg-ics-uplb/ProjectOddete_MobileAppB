@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(this);
-        loadFragment(new BlankFragment());  //initial fragment when app loads
+        loadFragment(new BlankFragment(this));  //initial fragment when app loads
     }
 
     private boolean loadFragment(Fragment fragment){

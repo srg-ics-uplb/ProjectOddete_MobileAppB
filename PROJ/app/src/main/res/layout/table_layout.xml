@@ -44,37 +44,6 @@
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp">
-
-                <TableRow>
-
-                    <TextView
-                        android:text="GPS Location\n(Lat, Lng)"
-                        style="@style/Table_Headers"/>
-
-                    <TextView
-                        android:text="pH level"
-                        style="@style/Table_Headers"/>
-
-                    <TextView
-                        android:text="Temp\nin C"
-                        style="@style/Table_Headers"/>
-
-                    <TextView
-                        android:text="Temp\nin F"
-                        style="@style/Table_Headers"/>
-
-                    <TextView
-                        android:text="Conductivity"
-                        style="@style/Table_Headers"/>
-
-                    <TextView
-                        android:text="TDS"
-                        style="@style/Table_Headers"/>
-
-                    <TextView
-                        android:text="Salinity"
-                        style="@style/Table_Headers"/>
-                </TableRow>
             </TableLayout>
         </HorizontalScrollView>
     </ScrollView>

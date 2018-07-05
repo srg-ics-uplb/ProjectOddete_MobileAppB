@@ -30,8 +30,8 @@ public class TableFragment extends Fragment {
 
     private Context context;
     private View view;
-    public static TableLayout table;
-    Spinner areaspinner, missionspinner;
+    private TableLayout table;
+    private Spinner areaspinner, missionspinner;
 
     String data;
     ArrayList<String> phlvls=new ArrayList<String>();
