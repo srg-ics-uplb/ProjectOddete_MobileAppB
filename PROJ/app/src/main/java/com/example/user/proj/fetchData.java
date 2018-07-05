@@ -45,7 +45,7 @@ import java.util.List;
 public class fetchData extends AsyncTask<Void, Void, Void> {
 
     private Context context;
-    private static TableLayout table;
+    private TableLayout table;
     private GoogleMap mMap;
     private Spinner spinner, areaspinner, missionspinner;
     private HeatmapTileProvider mProvider;
@@ -53,16 +53,16 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
     private int curArea=0, curMission=0, curProp=0;
     //curProp legend= 0-All properties, 1-ph, 2-cels, 3-faht, 4-cond, 5-tds, 6-saln
 
-    ArrayList<ArrayList<ArrayList<ArrayList<String>>>> allProperties= new ArrayList<ArrayList<ArrayList<ArrayList<String>>>>();
-    ArrayList<ArrayList<Double>> ph= new ArrayList<ArrayList<Double>>();
-    ArrayList<ArrayList<Double>> cels= new ArrayList<ArrayList<Double>>();
-    ArrayList<ArrayList<Double>> faht= new ArrayList<ArrayList<Double>>();
-    ArrayList<ArrayList<Double>> cond= new ArrayList<ArrayList<Double>>();
-    ArrayList<ArrayList<Double>> tds= new ArrayList<ArrayList<Double>>();
-    ArrayList<ArrayList<Double>> saln= new ArrayList<ArrayList<Double>>();
+    private ArrayList<ArrayList<ArrayList<ArrayList<String>>>> allProperties= new ArrayList<ArrayList<ArrayList<ArrayList<String>>>>();
+    private ArrayList<ArrayList<Double>> ph= new ArrayList<ArrayList<Double>>();
+    private ArrayList<ArrayList<Double>> cels= new ArrayList<ArrayList<Double>>();
+    private ArrayList<ArrayList<Double>> faht= new ArrayList<ArrayList<Double>>();
+    private ArrayList<ArrayList<Double>> cond= new ArrayList<ArrayList<Double>>();
+    private ArrayList<ArrayList<Double>> tds= new ArrayList<ArrayList<Double>>();
+    private ArrayList<ArrayList<Double>> saln= new ArrayList<ArrayList<Double>>();
 
-    ArrayList<String> area = new ArrayList<String>();
-    ArrayList<ArrayList<String>> missions = new ArrayList<ArrayList<String>>();
+    private ArrayList<String> area = new ArrayList<String>();
+    private ArrayList<ArrayList<String>> missions = new ArrayList<ArrayList<String>>();
 
     public fetchData (Context context, TableLayout table, Spinner areaspinner, Spinner missionspinner){
         this.context=context;

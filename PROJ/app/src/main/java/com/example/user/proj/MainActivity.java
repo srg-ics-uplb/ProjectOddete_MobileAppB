@@ -7,7 +7,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TableLayout;
+import android.widget.Toast;
+
 import com.example.user.proj.BlankFragment;
+
+import java.net.InetAddress;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
@@ -18,9 +22,24 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(this);
-        loadFragment(new BlankFragment(this));  //initial fragment when app loads
+        if(isInternetAvailable()){
+            BottomNavigationView navigation = findViewById(R.id.navigation);
+            navigation.setOnNavigationItemSelectedListener(this);
+            loadFragment(new BlankFragment(this));  //initial fragment when app loads
+        }else{
+            Toast.makeText(this, "No internet connection found.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private boolean isInternetAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com");
+            //You can replace it with your name
+            return !ipAddr.equals("");
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private boolean loadFragment(Fragment fragment){
