@@ -3,10 +3,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/x"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <Spinner
+            android:id="@+id/spinner_tablearea"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown"
+            android:layout_weight="1"
+            android:padding="0dp"/>
+        <Spinner
+            android:id="@+id/spinner_tablemission"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown"
+            android:layout_weight="1"
+            android:padding="0dp"/>
+    </LinearLayout>
+
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:layout_marginTop="45dp">
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -20,40 +44,6 @@
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp">
-
-                <TableRow>
-                    <TextView
-                        android:text="Time"
-                        style="@style/Table_Headers"/>
-
-                    <TextView
-                        android:text="GPS Location\n(Lat, Lng)"
-                        style="@style/Table_Headers"/>
-
-                    <TextView
-                        android:text="pH level"
-                        style="@style/Table_Headers"/>
-
-                    <TextView
-                        android:text="Temp\nin C"
-                        style="@style/Table_Headers"/>
-
-                    <TextView
-                        android:text="Temp\nin F"
-                        style="@style/Table_Headers"/>
-
-                    <TextView
-                        android:text="Conductivity"
-                        style="@style/Table_Headers"/>
-
-                    <TextView
-                        android:text="TDS"
-                        style="@style/Table_Headers"/>
-
-                    <TextView
-                        android:text="Salinity"
-                        style="@style/Table_Headers"/>
-                </TableRow>
             </TableLayout>
         </HorizontalScrollView>
     </ScrollView>

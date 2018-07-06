@@ -7,9 +7,10 @@
     <string-array name="water_properties">
         <item>All properties</item>
         <item>pH level</item>
-        <item>Temperature</item>
+        <item>Temperature (Celsius)</item>
+        <item>Temperature (Fahrenheit)</item>
         <item>Conductivity</item>
+        <item>TDS (Total Dissolved Solids)</item>
         <item>Salinity</item>
-        <item>Timestamp</item>
     </string-array>
 </resources>

@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -29,7 +30,8 @@ public class TableFragment extends Fragment {
 
     private Context context;
     private View view;
-    public static TableLayout table;
+    private TableLayout table;
+    private Spinner areaspinner, missionspinner;
 
     String data;
     ArrayList<String> phlvls=new ArrayList<String>();
@@ -48,7 +50,9 @@ public class TableFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view= inflater.inflate(R.layout.table_layout, null);
         table=(TableLayout)view.findViewById(R.id.table);
-        fetchData process=new fetchData(this.context, table);
+        areaspinner=(Spinner) view.findViewById(R.id.spinner_tablearea);
+        missionspinner=(Spinner)view.findViewById(R.id.spinner_tablemission);
+        fetchData process=new fetchData(this.context, table, areaspinner, missionspinner);
         process.execute();
         return view;
     }
