@@ -1,6 +1,7 @@
 package com.example.user.proj;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
