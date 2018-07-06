@@ -22,13 +22,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(isInternetAvailable()){
+        //if(isInternetAvailable()){
             BottomNavigationView navigation = findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(this);
             loadFragment(new BlankFragment(this));  //initial fragment when app loads
-        }else{
-            Toast.makeText(this, "No internet connection found.", Toast.LENGTH_LONG).show();
-        }
+//        }else{
+//            Toast.makeText(this, "No internet connection found.", Toast.LENGTH_LONG).show();
+//        }
     }
 
     private boolean isInternetAvailable() {
