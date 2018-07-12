@@ -73,7 +73,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         //======================reading the Areas to be put in Spinner (findAreas())=======================//
         try{
-            JSONArray ja=readURL("http://10.0.3.57:6200/areas");
+            JSONArray ja=readURL(MainActivity.apiEndpoint+"/areas");
             if(ja!=null){
                 for(int i=0; i<ja.length(); i++){
                     JSONObject jo = (JSONObject) ja.get(i);
@@ -87,7 +87,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
         //=====================reading the Missions to be put in Spinner (findAllMissions())==================//
         for(int i=0; i<area.size(); i++){   //iterate all areas
             try{
-                String link="http://10.0.3.57:6200/areas/"+(i+1)+"/missions";
+                String link=MainActivity.apiEndpoint+"/areas/"+(i+1)+"/missions";
                 JSONArray ja=readURL(link);
                 if(ja!=null){
                     ArrayList<String> tempList = new ArrayList<>();
@@ -105,7 +105,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
         //===========================reading the value of all properties (findMission())============================//
         for(int i=0; i<numOfMissions; i++){
             try{
-                String link="http://10.0.3.57:6200/missions/"+(i+1)+"/results";
+                String link=MainActivity.apiEndpoint+"/missions/"+(i+1)+"/results";
                 JSONArray ja=readURL(link);
                 ArrayList<ArrayList<String>> perMission = new ArrayList<>();
                 if(ja!=null){
@@ -413,7 +413,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
     private void storeProperty(ArrayList<ArrayList<ArrayList<Double>>> property, String toGet){
         for(int j=0; j<numOfMissions; j++){
             try {
-                String link="http://10.0.3.57:6200/missions/"+(j+1)+"/results/point_latitude,point_longitude,"+toGet;
+                String link=MainActivity.apiEndpoint+"/missions/"+(j+1)+"/results/point_latitude,point_longitude,"+toGet;
                 JSONArray ja=readURL(link);
                 ArrayList<ArrayList<Double>> oneMission = new ArrayList<>();
                 if(ja!=null){
