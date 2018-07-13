@@ -9,20 +9,19 @@ import android.view.MenuItem;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
-import com.example.user.proj.BlankFragment;
-
 import java.net.InetAddress;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
     public static TableLayout table;
+    public static String apiEndpoint="http://10.0.3.57:6200";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //if(isInternetAvailable()){
+//        if(isInternetAvailable()){
             BottomNavigationView navigation = findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(this);
             loadFragment(new BlankFragment(this));  //initial fragment when app loads
@@ -34,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private boolean isInternetAvailable() {
         try {
             InetAddress ipAddr = InetAddress.getByName("google.com");
-            //You can replace it with your name
             return !ipAddr.equals("");
 
         } catch (Exception e) {
@@ -62,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 break;
             case R.id.navigation_table:
                 fragment=new TableFragment(this);
+                break;
+            case R.id.navigation_settings:
+                fragment=new SettingsFragment(this);
                 break;
         }
         return loadFragment(fragment);

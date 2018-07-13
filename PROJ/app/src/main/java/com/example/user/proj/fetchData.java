@@ -3,25 +3,20 @@ package com.example.user.proj;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.google.maps.android.heatmaps.WeightedLatLng;
@@ -34,13 +29,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class fetchData extends AsyncTask<Void, Void, Void> {
 
@@ -48,21 +40,19 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
     private TableLayout table;
     private GoogleMap mMap;
     private Spinner spinner, areaspinner, missionspinner;
-    private HeatmapTileProvider mProvider;
-    private TileOverlay mOverlay;
     private int curArea=0, curMission=0, curProp=0, numOfMissions=0;
     //curProp legend= 0-All properties, 1-ph, 2-cels, 3-faht, 4-cond, 5-tds, 6-saln
 
-    private ArrayList<ArrayList<ArrayList<String>>> allProperties= new ArrayList<ArrayList<ArrayList<String>>>();
-    private ArrayList<ArrayList<ArrayList<Double>>> ph= new ArrayList<ArrayList<ArrayList<Double>>>();
-    private ArrayList<ArrayList<ArrayList<Double>>> cels= new ArrayList<ArrayList<ArrayList<Double>>>();
-    private ArrayList<ArrayList<ArrayList<Double>>> faht= new ArrayList<ArrayList<ArrayList<Double>>>();
-    private ArrayList<ArrayList<ArrayList<Double>>> cond= new ArrayList<ArrayList<ArrayList<Double>>>();
-    private ArrayList<ArrayList<ArrayList<Double>>> tds= new ArrayList<ArrayList<ArrayList<Double>>>();
-    private ArrayList<ArrayList<ArrayList<Double>>> saln= new ArrayList<ArrayList<ArrayList<Double>>>();
+    private ArrayList<ArrayList<ArrayList<String>>> allProperties= new ArrayList<>();
+    private ArrayList<ArrayList<ArrayList<Double>>> ph= new ArrayList<>();
+    private ArrayList<ArrayList<ArrayList<Double>>> cels= new ArrayList<>();
+    private ArrayList<ArrayList<ArrayList<Double>>> faht= new ArrayList<>();
+    private ArrayList<ArrayList<ArrayList<Double>>> cond= new ArrayList<>();
+    private ArrayList<ArrayList<ArrayList<Double>>> tds= new ArrayList<>();
+    private ArrayList<ArrayList<ArrayList<Double>>> saln= new ArrayList<>();
 
-    private ArrayList<String> area = new ArrayList<String>();
-    private ArrayList<ArrayList<String>> missions = new ArrayList<ArrayList<String>>();
+    private ArrayList<String> area = new ArrayList<>();
+    private ArrayList<ArrayList<String>> missions = new ArrayList<>();
 
     public fetchData (Context context, TableLayout table, Spinner areaspinner, Spinner missionspinner){
         this.context=context;
@@ -80,14 +70,15 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... voids) {  //extracting JSON file
+    protected Void doInBackground(Void... voids) {
         //======================reading the Areas to be put in Spinner (findAreas())=======================//
         try{
-            //JSONArray ja=readURL("http://10.0.3.57:6200/areas"); //TODO: change to proper link later
-            JSONArray ja=readURL("https://api.myjson.com/bins/8nqbe");
-            for(int i=0; i<ja.length(); i++){
-                JSONObject jo = (JSONObject) ja.get(i);
-                area.add((String)jo.get("area_name"));
+            JSONArray ja=readURL(MainActivity.apiEndpoint+"/areas");
+            if(ja!=null){
+                for(int i=0; i<ja.length(); i++){
+                    JSONObject jo = (JSONObject) ja.get(i);
+                    area.add((String)jo.get("area_name"));
+                }
             }
         }catch (JSONException e) {
             e.printStackTrace();
@@ -96,15 +87,17 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
         //=====================reading the Missions to be put in Spinner (findAllMissions())==================//
         for(int i=0; i<area.size(); i++){   //iterate all areas
             try{
-                String link="http://10.0.3.57:6200/areas/"+(i+1)+"/missions";
+                String link=MainActivity.apiEndpoint+"/areas/"+(i+1)+"/missions";
                 JSONArray ja=readURL(link);
-                ArrayList<String> tempList = new ArrayList<String>();
-                for(int j=0; j<ja.length(); j++){   //iterate missions per area
-                    JSONObject jo = (JSONObject) ja.get(j);
-                    tempList.add(Integer.toString((int) jo.get("mission_id")));
-                    numOfMissions++;
+                if(ja!=null){
+                    ArrayList<String> tempList = new ArrayList<>();
+                    for(int j=0; j<ja.length(); j++){   //iterate missions per area
+                        JSONObject jo = (JSONObject) ja.get(j);
+                        tempList.add(Integer.toString((int) jo.get("mission_id")));
+                        numOfMissions++;
+                    }
+                    missions.add(tempList);
                 }
-                missions.add(tempList);
             }catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -112,58 +105,59 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
         //===========================reading the value of all properties (findMission())============================//
         for(int i=0; i<numOfMissions; i++){
             try{
-                String link="http://10.0.3.57:6200/missions/"+(i+1)+"/results";
+                String link=MainActivity.apiEndpoint+"/missions/"+(i+1)+"/results";
                 JSONArray ja=readURL(link);
-                ArrayList<ArrayList<String>> perMission = new ArrayList<ArrayList<String>>();
-                for(int k=0; k<ja.length(); k++) {
-                    Double temp;
-                    JSONObject jo = (JSONObject) ja.get(k);
-                    ArrayList<String> propertiesPerMission = new ArrayList<String>();
+                ArrayList<ArrayList<String>> perMission = new ArrayList<>();
+                if(ja!=null){
+                    for(int k=0; k<ja.length(); k++) {
+                        Double temp;
+                        JSONObject jo = (JSONObject) ja.get(k);
+                        ArrayList<String> propertiesPerMission = new ArrayList<>();
 
-                    //TODO: interchange lat and lng positions later when DB is fixed
-                    if(jo.get("point_longitude") instanceof Integer){
-                        temp=1.0*(int)jo.get("point_longitude");
-                    }else temp=(Double)jo.get("point_longitude");
-                    propertiesPerMission.add(Double.toString(temp));
+                        if(jo.get("point_latitude") instanceof Integer){
+                            temp=1.0*(int)jo.get("point_latitude");
+                        }else temp=(Double)jo.get("point_latitude");
+                        propertiesPerMission.add(Double.toString(temp));
 
-                    if(jo.get("point_latitude") instanceof Integer){
-                        temp=1.0*(int)jo.get("point_latitude");
-                    }else temp=(Double)jo.get("point_latitude");
-                    propertiesPerMission.add(Double.toString(temp));
-                    //===================================================================//
-                    if(jo.get("avg_ph") instanceof Integer){
-                        temp=1.0*(int)jo.get("avg_ph");
-                    }else temp=(Double)jo.get("avg_ph");
-                    propertiesPerMission.add(Double.toString(temp));
+                        if(jo.get("point_longitude") instanceof Integer){
+                            temp=1.0*(int)jo.get("point_longitude");
+                        }else temp=(Double)jo.get("point_longitude");
+                        propertiesPerMission.add(Double.toString(temp));
 
-                    if(jo.get("avg_cels") instanceof Integer){
-                        temp=1.0*(int)jo.get("avg_cels");
-                    }else temp=(Double)jo.get("avg_cels");
-                    propertiesPerMission.add(Double.toString(temp));
+                        if(jo.get("avg_ph") instanceof Integer){
+                            temp=1.0*(int)jo.get("avg_ph");
+                        }else temp=(Double)jo.get("avg_ph");
+                        propertiesPerMission.add(Double.toString(temp));
 
-                    if(jo.get("avg_faht") instanceof Integer){
-                        temp=1.0*(int)jo.get("avg_faht");
-                    }else temp=(Double)jo.get("avg_faht");
-                    propertiesPerMission.add(Double.toString(temp));
+                        if(jo.get("avg_cels") instanceof Integer){
+                            temp=1.0*(int)jo.get("avg_cels");
+                        }else temp=(Double)jo.get("avg_cels");
+                        propertiesPerMission.add(Double.toString(temp));
 
-                    if(jo.get("avg_cond") instanceof Integer){
-                        temp=1.0*(int)jo.get("avg_cond");
-                    }else temp=(Double)jo.get("avg_cond");
-                    propertiesPerMission.add(Double.toString(temp));
+                        if(jo.get("avg_faht") instanceof Integer){
+                            temp=1.0*(int)jo.get("avg_faht");
+                        }else temp=(Double)jo.get("avg_faht");
+                        propertiesPerMission.add(Double.toString(temp));
 
-                    if(jo.get("avg_tds") instanceof Integer){
-                        temp=1.0*(int)jo.get("avg_tds");
-                    }else temp=(Double)jo.get("avg_tds");
-                    propertiesPerMission.add(Double.toString(temp));
+                        if(jo.get("avg_cond") instanceof Integer){
+                            temp=1.0*(int)jo.get("avg_cond");
+                        }else temp=(Double)jo.get("avg_cond");
+                        propertiesPerMission.add(Double.toString(temp));
 
-                    if(jo.get("avg_saln") instanceof Integer){
-                        temp=1.0*(int)jo.get("avg_saln");
-                    }else temp=(Double)jo.get("avg_saln");
-                    propertiesPerMission.add(Double.toString(temp));
+                        if(jo.get("avg_tds") instanceof Integer){
+                            temp=1.0*(int)jo.get("avg_tds");
+                        }else temp=(Double)jo.get("avg_tds");
+                        propertiesPerMission.add(Double.toString(temp));
 
-                    perMission.add(propertiesPerMission);
+                        if(jo.get("avg_saln") instanceof Integer){
+                            temp=1.0*(int)jo.get("avg_saln");
+                        }else temp=(Double)jo.get("avg_saln");
+                        propertiesPerMission.add(Double.toString(temp));
+
+                        perMission.add(propertiesPerMission);
+                    }
+                    allProperties.add(perMission);
                 }
-                allProperties.add(perMission);
             }catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -187,7 +181,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
         //===========================ADDING AREAS AND MISSIONS TO SPINNER============================//
         if (this.context!=null){
             //initialize area spinner
-            ArrayAdapter<String> adapter_area = new ArrayAdapter<String>(this.context,
+            ArrayAdapter<String> adapter_area = new ArrayAdapter<>(this.context,
                     android.R.layout.simple_spinner_item, area);
             adapter_area.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             areaspinner.setAdapter(adapter_area);
@@ -195,14 +189,18 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
             areaspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                    String text = parentView.getItemAtPosition(position).toString();
                     curArea=areaspinner.getSelectedItemPosition();
                     if(missions.size()!=0){
-                        ArrayAdapter<String> adapter_mission= new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, missions.get(curArea));
+                        ArrayAdapter<String> adapter_mission= new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, missions.get(curArea));
                         adapter_mission.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         missionspinner.setAdapter(adapter_mission);
                         if(curArea!=0){
-                            curMission=missions.get(curArea-1).size();
+                            int temp=curArea, totalSize=0;
+                            while(temp!=0){
+                                totalSize+=missions.get(temp-1).size();
+                                temp--;
+                            }
+                            curMission=totalSize;
                         }else{
                             curMission=0;
                         }
@@ -217,8 +215,17 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
             missionspinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                    String text = parentView.getItemAtPosition(position).toString();
-                    curMission=Integer.parseInt(text)-1;
+                    //String text = parentView.getItemAtPosition(position).toString();
+                    if(curArea!=0){
+                        int temp=curArea, totalSize=0;
+                        while(temp!=0){
+                            totalSize+=missions.get(temp-1).size();
+                            temp--;
+                        }
+                        curMission=totalSize+position;
+                    }else{
+                        curMission=0+position;
+                    }
                     spinnerChanged();
                 }
 
@@ -244,20 +251,27 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
                     @Override
                     public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                         String text = parentView.getItemAtPosition(position).toString();
-                        if (text.equals("pH level")) {
-                            curProp=1;
-                        } else if (text.equals("Temperature (Celsius)")) {
-                            curProp=2;
-                        } else if (text.equals("Temperature (Fahrenheit)")) {
-                            curProp=3;
-                        } else if (text.equals("Conductivity")) {
-                            curProp=4;
-                        } else if (text.equals("TDS (Total Dissolved Solids)")) {
-                            curProp=5;
-                        } else if (text.equals("Salinity")) {
-                            curProp=6;
-                        } else {
-                            curProp=0;
+                        switch (text){
+                            case "pH level":
+                                curProp=1;
+                                break;
+                            case "Temperature (Celsius)":
+                                curProp=2;
+                                break;
+                            case "Temperature (Fahrenheit)":
+                                curProp=3;
+                                break;
+                            case "Conductivity":
+                                curProp=4;
+                                break;
+                            case "TDS (Total Dissolved Solids)":
+                                curProp=5;
+                                break;
+                            case "Salinity":
+                                curProp=6;
+                                break;
+                            default:
+                                curProp=0;
                         }
                         spinnerChanged();
                     }
@@ -286,12 +300,11 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
     private void createTable(){
         table.removeAllViews();
         ArrayList<ArrayList<String>> missionData = allProperties.get(curMission);
-        int col=0;
         for(int i = 0; i <8; i++){
             if(missionData.size()!=0){
                 TableRow row = new TableRow(this.context);
                 TextView tvhead = new TextView(this.context);
-                String head="";
+                String head;
                 if(i==0){
                     head="(Lat, Lng)";
                 }else if(i==2){
@@ -336,6 +349,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
                     tv.setText(str);
                     row.addView(tv);
 
+                    int col;
                     if(i==0){
                         col = Color.parseColor("#50A6C2");
                     } else if (i % 2 == 0) {
@@ -356,7 +370,8 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
     private void addHeatMap(ArrayList<ArrayList<Double>> storage) {
         mMap.clear();
         if(storage.size()!=0){
-            ArrayList<WeightedLatLng> weighteddata = new ArrayList<WeightedLatLng>();
+            ArrayList<WeightedLatLng> weighteddata = new ArrayList<>();
+            HeatmapTileProvider mProvider;
 
             for(int i=0; i<storage.size(); i++){
                 LatLng latLng = new LatLng(storage.get(i).get(0), storage.get(i).get(1));
@@ -365,8 +380,8 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
             mProvider = new HeatmapTileProvider.Builder()
                     .weightedData(weighteddata)
                     .build();
-            mProvider.setRadius(50);
-            mOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+            mProvider.setRadius(25);
+            mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
         }
     }
 
@@ -398,31 +413,32 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
     private void storeProperty(ArrayList<ArrayList<ArrayList<Double>>> property, String toGet){
         for(int j=0; j<numOfMissions; j++){
             try {
-                String link="http://10.0.3.57:6200/missions/"+(j+1)+"/results/point_latitude,point_longitude,"+toGet;
+                String link=MainActivity.apiEndpoint+"/missions/"+(j+1)+"/results/point_latitude,point_longitude,"+toGet;
                 JSONArray ja=readURL(link);
-                ArrayList<ArrayList<Double>> oneMission = new ArrayList<ArrayList<Double>>();
-                for(int i=0; i<ja.length(); i++){
-                    Double temp;
-                    JSONObject jo = (JSONObject) ja.get(i);
-                    ArrayList<Double> onePoint = new ArrayList<Double>();
+                ArrayList<ArrayList<Double>> oneMission = new ArrayList<>();
+                if(ja!=null){
+                    for(int i=0; i<ja.length(); i++){
+                        Double temp;
+                        JSONObject jo = (JSONObject) ja.get(i);
+                        ArrayList<Double> onePoint = new ArrayList<>();
 
-                    //TODO: change pos of long lat later
-                    if(jo.get("point_longitude") instanceof Integer){
-                        temp=1.0*(int)jo.get("point_longitude");
-                    }else temp=(Double)jo.get("point_longitude");
-                    onePoint.add(temp);
+                        if(jo.get("point_latitude") instanceof Integer){
+                            temp=1.0*(int)jo.get("point_latitude");
+                        }else temp=(Double)jo.get("point_latitude");
+                        onePoint.add(temp);
 
-                    if(jo.get("point_latitude") instanceof Integer){
-                        temp=1.0*(int)jo.get("point_latitude");
-                    }else temp=(Double)jo.get("point_latitude");
-                    onePoint.add(temp);
+                        if(jo.get("point_longitude") instanceof Integer){
+                            temp=1.0*(int)jo.get("point_longitude");
+                        }else temp=(Double)jo.get("point_longitude");
+                        onePoint.add(temp);
 
-                    if(jo.get(toGet) instanceof Integer){
-                        temp=1.0*(int)jo.get(toGet);
-                    }else temp=(Double)jo.get(toGet);
-                    onePoint.add(temp);
+                        if(jo.get(toGet) instanceof Integer){
+                            temp=1.0*(int)jo.get(toGet);
+                        }else temp=(Double)jo.get(toGet);
+                        onePoint.add(temp);
 
-                    oneMission.add(onePoint);
+                        oneMission.add(onePoint);
+                    }
                 }
                 property.add(oneMission);
             }catch (JSONException e) {
@@ -451,11 +467,9 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
                 data+=line;
             }
             ja = new JSONArray(data);
-        }catch (MalformedURLException e){
+        }catch (MalformedURLException | JSONException e){
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
-        }catch (JSONException e) {
             e.printStackTrace();
         }
         return ja;
