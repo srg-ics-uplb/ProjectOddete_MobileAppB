@@ -39,7 +39,7 @@ public class TableFragment extends Fragment {
         table=(TableLayout)view.findViewById(R.id.table);
         areaspinner=(Spinner) view.findViewById(R.id.spinner_tablearea);
         missionspinner=(Spinner)view.findViewById(R.id.spinner_tablemission);
-        fetchData process=new fetchData(this.context, table, areaspinner, missionspinner);
+        FetchData process=new FetchData(this.context, table, areaspinner, missionspinner);
         process.execute();
         return view;
     }

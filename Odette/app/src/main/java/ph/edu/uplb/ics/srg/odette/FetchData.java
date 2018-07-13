@@ -34,7 +34,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class fetchData extends AsyncTask<Void, Void, Void> {
+public class FetchData extends AsyncTask<Void, Void, Void> {
 
     private Context context;
     private TableLayout table;
@@ -54,14 +54,14 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
     private ArrayList<String> area = new ArrayList<>();
     private ArrayList<ArrayList<String>> missions = new ArrayList<>();
 
-    public fetchData (Context context, TableLayout table, Spinner areaspinner, Spinner missionspinner){
+    public FetchData(Context context, TableLayout table, Spinner areaspinner, Spinner missionspinner){
         this.context=context;
         this.table=table;
         this.areaspinner = areaspinner;
         this.missionspinner = missionspinner;
     }
 
-    public fetchData(Context context, GoogleMap mMap, Spinner spinner, Spinner areaspinner, Spinner missionspinner){
+    public FetchData(Context context, GoogleMap mMap, Spinner spinner, Spinner areaspinner, Spinner missionspinner){
         this.context=context;
         this.mMap=mMap;
         this.spinner=spinner;

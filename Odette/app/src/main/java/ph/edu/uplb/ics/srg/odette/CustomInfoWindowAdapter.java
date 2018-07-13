@@ -8,11 +8,11 @@ import android.widget.TextView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
-public class custominfowindowadapter implements GoogleMap.InfoWindowAdapter {
+public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private final View view;
     private Context context;
 
-    public  custominfowindowadapter (Context context){
+    public CustomInfoWindowAdapter(Context context){
         this.context=context;
         view= LayoutInflater.from(context).inflate(R.layout.custominfowindow, null);
     }

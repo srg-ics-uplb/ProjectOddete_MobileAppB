@@ -64,8 +64,8 @@ public class BlankFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        //mMap.setInfoWindowAdapter(new custominfowindowadapter(this.getActivity()));   //TODO fix this later
-        fetchData process=new fetchData(this.context, mMap, spinner, areaspinner, missionspinner);
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(this.getActivity()));   //TODO fix this later
+        FetchData process=new FetchData(this.context, mMap, spinner, areaspinner, missionspinner);
         process.execute();
     }
 }
