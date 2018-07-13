@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Odette</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_maps">Map</string>
+    <string-array name="water_properties">
+        <item>All properties</item>
+        <item>pH level</item>
+        <item>Temperature (Celsius)</item>
+        <item>Temperature (Fahrenheit)</item>
+        <item>Conductivity</item>
+        <item>TDS (Total Dissolved Solids)</item>
+        <item>Salinity</item>
+    </string-array>
+</resources>

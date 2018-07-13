@@ -1,4 +1,4 @@
-package com.example.user.proj;
+package ph.edu.uplb.ics.srg.odette;
 
 import android.content.Context;
 import android.graphics.Color;
