@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class SettingsFragment extends Fragment{
 
@@ -32,6 +33,7 @@ public class SettingsFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 MainActivity.apiEndpoint=editText.getText().toString();
+                Toast.makeText(context, "Settings successfully saved.", Toast.LENGTH_LONG).show();
             }
         });
         return view;

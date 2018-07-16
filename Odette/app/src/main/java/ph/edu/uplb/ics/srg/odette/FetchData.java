@@ -34,7 +34,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class fetchData extends AsyncTask<Void, Void, Void> {
+public class FetchData extends AsyncTask<Void, Void, Void> {
 
     private Context context;
     private TableLayout table;
@@ -54,14 +54,14 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
     private ArrayList<String> area = new ArrayList<>();
     private ArrayList<ArrayList<String>> missions = new ArrayList<>();
 
-    public fetchData (Context context, TableLayout table, Spinner areaspinner, Spinner missionspinner){
+    public FetchData(Context context, TableLayout table, Spinner areaspinner, Spinner missionspinner){
         this.context=context;
         this.table=table;
         this.areaspinner = areaspinner;
         this.missionspinner = missionspinner;
     }
 
-    public fetchData(Context context, GoogleMap mMap, Spinner spinner, Spinner areaspinner, Spinner missionspinner){
+    public FetchData(Context context, GoogleMap mMap, Spinner spinner, Spinner areaspinner, Spinner missionspinner){
         this.context=context;
         this.mMap=mMap;
         this.spinner=spinner;
@@ -412,7 +412,7 @@ public class fetchData extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private void storeProperty(ArrayList<ArrayList<ArrayList<Double>>> property, String toGet){
+    private void storeProperty(ArrayList<ArrayList<ArrayList<Double>>> property, String toGet){ //to store the specific property and location into the arraylist
         for(int j=0; j<numOfMissions; j++){
             try {
                 String link=MainActivity.apiEndpoint+"/missions/"+(j+1)+"/results/point_latitude,point_longitude,"+toGet;
