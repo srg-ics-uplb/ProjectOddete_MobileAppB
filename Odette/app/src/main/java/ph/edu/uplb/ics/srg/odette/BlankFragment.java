@@ -37,7 +37,7 @@ public class BlankFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        //Blank fragment contains the map and its spinners
         mapFragment= (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment==null){
             FragmentManager fm= getFragmentManager();
@@ -64,7 +64,7 @@ public class BlankFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(this.getActivity()));   //TODO fix this later
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(this.getActivity()));
         FetchData process=new FetchData(this.context, mMap, spinner, areaspinner, missionspinner);
         process.execute();
     }

@@ -412,7 +412,7 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private void storeProperty(ArrayList<ArrayList<ArrayList<Double>>> property, String toGet){
+    private void storeProperty(ArrayList<ArrayList<ArrayList<Double>>> property, String toGet){ //to store the specific property and location into the arraylist
         for(int j=0; j<numOfMissions; j++){
             try {
                 String link=MainActivity.apiEndpoint+"/missions/"+(j+1)+"/results/point_latitude,point_longitude,"+toGet;

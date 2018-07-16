@@ -24,14 +24,14 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         tv1.setGravity(Gravity.CENTER);
 
         if(!title.equals("")){
-            tv1.setText(title);
+            tv1.setText(title); //get the pin title
         }
 
         String snippet = marker.getSnippet();
         TextView tv2= (TextView)view.findViewById(R.id.snippet);
 
         if(!snippet.equals("")){
-            tv2.setText(snippet);
+            tv2.setText(snippet);   //get the pin snippet
         }
     }
 
