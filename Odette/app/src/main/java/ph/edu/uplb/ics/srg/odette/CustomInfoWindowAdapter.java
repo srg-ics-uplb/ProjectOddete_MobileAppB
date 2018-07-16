@@ -1,6 +1,7 @@
 package ph.edu.uplb.ics.srg.odette;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private void renderWindowText(Marker marker, View view){
         String title = marker.getTitle();
         TextView tv1= (TextView)view.findViewById(R.id.title);
+        tv1.setGravity(Gravity.CENTER);
 
         if(!title.equals("")){
             tv1.setText(title);
