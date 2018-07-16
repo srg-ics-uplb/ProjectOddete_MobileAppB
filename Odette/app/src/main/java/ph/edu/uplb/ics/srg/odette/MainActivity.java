@@ -13,7 +13,8 @@ import java.net.InetAddress;
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
     public static TableLayout table;
-    public static String apiEndpoint="http://10.0.3.57:6200";
+    //public static String apiEndpoint="http://10.0.3.57:6200";
+    public static String apiEndpoint="http://202.92.144.45/odette/api/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
