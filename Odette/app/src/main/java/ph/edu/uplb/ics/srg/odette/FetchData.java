@@ -93,7 +93,7 @@ public class FetchData extends AsyncTask<Void, Void, Void> {
                     ArrayList<String> tempList = new ArrayList<>();
                     for(int j=0; j<ja.length(); j++){   //iterate missions per area
                         JSONObject jo = (JSONObject) ja.get(j);
-                        tempList.add(Integer.toString((int) jo.get("mission_id")));
+                        tempList.add(Integer.toString((int) jo.get("mission_number")));
                         numOfMissions++;
                     }
                     missions.add(tempList);
